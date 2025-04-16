@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Great Western Trail - Score Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .label-container {
+            flex: 1;
+            min-width: 150px;
+            max-width: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .label-container label {
+            font-weight: bold;
+        }
+
+        .label-container small {
+            font-size: 0.8em;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        input[type="number"],
+        input[type="checkbox"] {
+            flex-shrink: 0;
+            width: 50px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 8px 16px;
+            font-size: 1rem;
+            border: none;
+            background-color: #171717;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive fallback for narrow screens */
+        @media (max-width: 500px) {
+            .input-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input[type="number"],
+            input[type="checkbox"] {
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .label-container {
+                max-width: 100%;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+<h1>Great Western Trail - Score Calculator</h1>
+
+<form id="scoreForm">
+    <h4>Input Scores for Each Category</h4>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="dollars">Dollars Owned:</label>
+            <small>The player gains 1 victory point for every 5 Dollars that she owns</small>
+        </div>
+        <input type="number" id="dollars" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="privateBuildings">Private Building Points:</label>
+            <small>The player gains the sum of the victory points printed on each of her private building tiles which is placed on the game board</small>
+        </div>
+        <input type="number" id="privateBuildings" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="cityCrests">City Crest Points:</label>
+            <small>The player gains the sum of the victory points that she has unlocked with her discs on the city crests. Any negative victory points must be subtracted. (Negative sums are possible).</small>
+        </div>
+        <input type="number" id="cityCrests" min="-999" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="trainStations">Train Station Points:</label>
+            <small>The player gains the sum of the victory points printed right next to each train station that has her disc on it</small>
+        </div>
+        <input type="number" id="trainStations" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="hazardTiles">Hazard Tiles Points:</label>
+            <small>The player gains the sum of the victory points printed on each of the hazard tiles she collected</small>
+        </div>
+        <input type="number" id="hazardTiles" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="cattleCards">Cattle Cards Points:</label>
+            <small>The player gains the sum of victory points printed in each cattle card in her personal draw stack, hand cards and personal discard pile</small>
+        </div>
+        <input type="number" id="cattleCards" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="objectiveCards">Objective Cards Result:</label>
+            <small>The player gains the sum of victory points printed in each fulfilled objective card. An objective card is considered 'fulfilled' when the criteria in the card is met by the player. Unfulfilled objective cards must be substracted (Negative sums are possible) </small>
+        </div>
+        <input type="number" id="objectiveCards" min="-999" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="stationMasterTiles">Station Master Tiles Points:</label>
+            <small>
+                The player gains the sum of victory points generated by the individual tasks of the station master tiles</small>
+        </div>
+        <input type="number" id="stationMasterTiles" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="workers">Workers on 5th/6th Space:</label>
+            <small>The player gains 4 victory points for each worker that is placed on the fifth or sixth space of any row in her worker section</small>
+        </div>
+        <input type="number" id="workers" min="0" oninput="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="clearedSpace">Cleared Disc Space:</label>
+            <small>The player gains 3 victory points if she managed to clear the disc space with 3 points on top during the game</small>
+        </div>
+        <input type="checkbox" id="clearedSpace" value="3" onchange="calculateScore()">
+    </div>
+
+    <div class="input-row">
+        <div class="label-container">
+            <label for="jobMarketToken">Job Market Token:</label>
+            <small>The player gains 2 victory points if she has the job market in front of her</small>
+        </div>
+        <input type="checkbox" id="jobMarketToken" value="2" onchange="calculateScore()"> 
+    </div>
+</form>
+
+
+
+<h3>Total Score: <span id="totalScore">0</span></h3>
+<button type="button" onclick="clearForm()">Clear</button>
+
+<script>
+function calculateScore() {
+    const dollars = Math.floor(parseInt(document.getElementById('dollars').value) || 0 / 5);
+    const privateBuildings = parseInt(document.getElementById('privateBuildings').value) || 0;
+    const cityCrests = parseInt(document.getElementById('cityCrests').value) || 0;
+    const trainStations = parseInt(document.getElementById('trainStations').value) || 0;
+    const hazardTiles = parseInt(document.getElementById('hazardTiles').value) || 0;
+    const cattleCards = parseInt(document.getElementById('cattleCards').value) || 0;
+    const objectiveCards = parseInt(document.getElementById('objectiveCards').value) || 0;
+    const stationMasterTiles = parseInt(document.getElementById('stationMasterTiles').value) || 0;
+    const workers = (parseInt(document.getElementById('workers').value) || 0) * 4;
+    const clearedSpace = document.getElementById('clearedSpace').checked ? 3 : 0;
+    const jobMarketToken = document.getElementById('jobMarketToken').checked ? 2 : 0;
+
+    const totalScore = dollars + privateBuildings + cityCrests + trainStations +
+                       hazardTiles + cattleCards + objectiveCards + stationMasterTiles +
+                       workers + clearedSpace + jobMarketToken;
+
+    document.getElementById('totalScore').innerText = totalScore;
+}
+
+function clearForm() {
+    document.getElementById("scoreForm").reset();
+    document.getElementById("totalScore").innerText = "0";
+}
+</script>
+
+</body>
+</html>
